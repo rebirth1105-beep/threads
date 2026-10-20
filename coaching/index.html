@@ -212,6 +212,9 @@
   .compare li:last-child { border-bottom:none; background:rgba(255,255,255,.05); font-weight:700; }
   .compare li span:last-child { flex:0 0 auto; color:var(--on-navy-soft); }
   .compare li:last-child span:last-child { color:var(--red-on-navy); }
+  .compare li span:first-child { min-width:0; }
+  .compare li span.ok { color:var(--red-on-navy); font-weight:700; }
+  .compare .was { text-decoration:line-through; color:var(--on-navy-soft); font-size:12.5px; margin-left:6px; white-space:nowrap; }
 
   /* fit */
   .two { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:24px; }
@@ -334,7 +337,7 @@
     <div class="wrap">
       <p class="eyebrow">혼자 하면 막히는 곳</p>
       <h2>스레드, 처음엔<br>생각보다 쉽지 않습니다</h2>
-      <p class="lede">"스레드 코칭 같은 건 안 하세요?" 요즘 이런 문의를 자주 받습니다. 들어보면 막히는 지점이 거의 같습니다.</p>
+      <p class="lede"><strong>스레드의 생태계는 다른 채널과 다릅니다!</strong> 다른 SNS에서 하던 방식대로 하면, 막히는 지점이 거의 같습니다.</p>
       <ul class="stuck">
         <li><span class="ic">?</span><div class="q">무슨 글을 써야 할지 모르겠어요<small>강의는 들었는데 막상 빈 화면 앞에 서면 첫 줄이 안 나옵니다.</small></div></li>
         <li><span class="ic">?</span><div class="q">올렸는데 반응이 없어요<small>조회수도 댓글도 그대로인데, 무엇이 문제인지 알 수가 없습니다.</small></div></li>
@@ -454,8 +457,11 @@
         <div class="daily">하루 <span class="fig">10,000</span>원</div>
       </div>
       <ul class="compare">
-        <li><span>1:1 계정 진단 1회</span><span class="fig">150,000원</span></li>
-        <li><span>30일 밀착 코칭 (진단 포함, 무제한)</span><span class="fig">300,000원</span></li>
+        <li><span>1:1 계정 분석 · 성장 전략 컨설팅 <s class="was">단품 150,000원</s></span><span class="ok">✓ 포함</span></li>
+        <li><span>콘텐츠 기획 · 브랜딩 방향 설정</span><span class="ok">✓ 포함</span></li>
+        <li><span>글쓰기 첨삭 · 피드백 (30일 무제한)</span><span class="ok">✓ 포함</span></li>
+        <li><span>조회수 · 댓글 분석 및 개선 (30일 무제한)</span><span class="ok">✓ 포함</span></li>
+        <li><span>1기 한정가</span><span class="fig">300,000원</span></li>
       </ul>
       <p class="footnote">한 번 진단받고 끝나는 게 아니라, 한 달 내내 쓰는 글마다 함께 봅니다. 2기부터는 가격이 인상될 예정입니다.</p>
     </div>
