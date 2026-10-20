@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="스레드 계정 분석부터 글 첨삭까지, 30일 동안 1:1로 붙어서 함께 키웁니다. 1기 딱 5명, 11월 1일 시작.">
+<meta property="og:title" content="스레드 30일 밀착 코칭 · 1기 5명">
+<meta property="og:description" content="계정 분석 · 기획 · 첨삭 · 반응 분석 30일 무제한. 11월 1일 시작, 하루 1만 원.">
+<meta property="og:type" content="website">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>스레드 30일 밀착 코칭</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Serif+KR:wght@600;700;900&display=swap">
+<style>
+  /* layout: 좁은 에디토리얼 컬럼 + 네이비 풀블리드 밴드, 히어로에 30일 달력과 5개 좌석 */
+  :root {
+    --paper:#fbfaf6; --raised:#ffffff;
+    --ink:#14161f; --ink-soft:#565b6b; --ink-faint:#8b8f9c;
+    --line:#e5e2d7; --line-soft:#efece2;
+    --navy:#15264c; --navy-soft:#eef1f7; --on-navy:#f4f6fb; --on-navy-soft:#a9b6d6; --navy-line:rgba(255,255,255,.14);
+    --red:#b31b34; --red-hover:#951327; --red-soft:#f8ece9; --red-line:#e6c4bf; --red-on-navy:#f0b3aa;
+    --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    --serif:"Noto Serif KR",Georgia,serif;
+    --num:Georgia,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0b0e16; --raised:#141824;
+      --ink:#e9eaf1; --ink-soft:#a4a9b8; --ink-faint:#6f7484;
+      --line:#262b3a; --line-soft:#1c2130;
+      --navy:#121a30; --navy-soft:#1c2336; --on-navy:#eef1f8; --on-navy-soft:#9fabca; --navy-line:rgba(255,255,255,.12);
+      --red:#e5697c; --red-hover:#d4566a; --red-soft:#2a1820; --red-line:#4a2a30; --red-on-navy:#f0b3aa;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0b0e16; --raised:#141824;
+    --ink:#e9eaf1; --ink-soft:#a4a9b8; --ink-faint:#6f7484;
+    --line:#262b3a; --line-soft:#1c2130;
+    --navy:#121a30; --navy-soft:#1c2336; --on-navy:#eef1f8; --on-navy-soft:#9fabca; --navy-line:rgba(255,255,255,.12);
+    --red:#e5697c; --red-hover:#d4566a; --red-soft:#2a1820; --red-line:#4a2a30; --red-on-navy:#f0b3aa;
+    color-scheme:dark;
+  }
+
+  *,*::before,*::after { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *{ transition:none!important; animation:none!important; } }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); line-height:1.7; word-break:keep-all; overflow-wrap:break-word;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before { content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:70; background:var(--paper); }
+  .fig { font-family:var(--num); font-variant-numeric:tabular-nums; }
+
+  /* topbar */
+  .topbar {
+    position:sticky; top:env(safe-area-inset-top,0px); z-index:50;
+    display:flex; align-items:center; gap:16px;
+    padding-block:11px;
+    padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px));
+    background:color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .brand { font-weight:900; font-size:15.5px; color:var(--ink); text-decoration:none; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .topbar nav { display:flex; gap:2px; }
+  .topbar nav a { font-size:13.5px; color:var(--ink-soft); text-decoration:none; padding:6px 10px; border-radius:7px; font-weight:500; white-space:nowrap; }
+  .topbar nav a:hover, .topbar nav a:focus-visible { background:var(--line-soft); color:var(--ink); outline:none; }
+  @media (max-width:760px){ .topbar nav { display:none; } }
+  .mini-cta { flex-shrink:0; background:var(--red); color:#fff; text-decoration:none; font-size:13.5px; font-weight:700; padding:7px 15px; border-radius:8px; }
+  .mini-cta:hover { background:var(--red-hover); }
+
+  /* layout */
+  .wrap { max-width:720px; margin:0 auto; padding-left:max(20px, env(safe-area-inset-left,0px)); padding-right:max(20px, env(safe-area-inset-right,0px)); }
+  section { padding-block:clamp(52px,9vw,88px); }
+  section + section { border-top:1px solid var(--line-soft); }
+  .eyebrow { display:flex; align-items:center; gap:11px; font-size:12px; font-weight:700; letter-spacing:.16em; color:var(--red); margin:0 0 18px; }
+  .eyebrow::after { content:""; height:1px; width:34px; background:var(--red-line); }
+  h1,h2,h3 { line-height:1.28; letter-spacing:-.02em; text-wrap:balance; margin:0; }
+  h2 { font-size:clamp(23px,4.2vw,32px); font-weight:900; }
+  .lede { font-size:clamp(16px,2.3vw,18px); color:var(--ink-soft); margin:16px 0 0; max-width:60ch; }
+  p { margin:16px 0 0; max-width:62ch; }
+  .accent { color:var(--red); font-weight:700; }
+  .footnote { font-size:12.5px; color:var(--ink-faint); margin:14px 0 0; line-height:1.55; }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; background:var(--red); color:#fff; text-decoration:none; font-size:15px; font-weight:700; padding:13px 24px; border-radius:10px; border:1px solid var(--red); }
+  .btn:hover { background:var(--red-hover); border-color:var(--red-hover); }
+  .btn:focus-visible, .mini-cta:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
+  .btn--ghost { background:transparent; color:var(--ink); border-color:var(--line); }
+  .btn--ghost:hover { background:var(--line-soft); border-color:var(--ink-faint); }
+  .btn--light { background:#fff; color:#15264c; border-color:#fff; }
+  .btn--light:hover { background:#e9edf6; border-color:#e9edf6; }
+  .cta-row { display:flex; flex-wrap:wrap; gap:12px; margin-top:28px; align-items:center; }
+
+  .tbd { display:inline-block; border:1.5px dashed var(--red-line); background:var(--red-soft); color:var(--red); border-radius:7px; padding:0 7px; font-size:.86em; font-weight:700; }
+
+  /* bands */
+  .band { background:var(--navy); color:var(--on-navy); border-top:none; }
+  .band + section { border-top:none; }
+  .band .eyebrow { color:var(--red-on-navy); }
+  .band .eyebrow::after { background:rgba(255,255,255,.22); }
+  .band .lede, .band p { color:var(--on-navy-soft); }
+  .band .accent { color:var(--red-on-navy); }
+  .band .footnote { color:var(--on-navy-soft); }
+
+  /* hero */
+  .hero { padding-block:clamp(40px,7vw,68px) clamp(48px,8vw,76px); }
+  .kicker { display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; letter-spacing:.08em; color:var(--red); margin:0 0 18px; }
+  .kicker .dot { width:7px; height:7px; border-radius:50%; background:var(--red); animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity:.35; } }
+  .hero h1 { font-family:var(--serif); font-size:clamp(31px,6.4vw,50px); font-weight:900; line-height:1.3; }
+  .hero h1 em { font-style:normal; color:var(--red); }
+  .hero .promise { font-size:clamp(16px,2.5vw,19px); color:var(--ink-soft); margin:20px 0 0; max-width:44ch; line-height:1.6; }
+
+  .board { margin-top:32px; border:1px solid var(--line); border-radius:16px; background:var(--raised); padding:20px clamp(16px,3.5vw,24px) 18px; }
+  .board-head { display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .board-head b { font-size:14px; font-weight:800; }
+  .board-head span { font-size:12.5px; color:var(--ink-faint); }
+  .cal { display:grid; grid-template-columns:repeat(10,1fr); gap:5px; margin-top:14px; }
+  .cal i { aspect-ratio:1; max-width:100%; border-radius:6px; background:var(--navy-soft); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-style:normal; font-family:var(--num); font-size:11px; color:var(--ink-faint); }
+  .cal i.on { background:var(--navy); border-color:var(--navy); color:var(--on-navy); }
+  @media (max-width:420px){ .cal { gap:4px; } .cal i { font-size:9.5px; border-radius:4px; } }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:12px; font-size:12px; color:var(--ink-soft); }
+  .legend span::before { content:""; display:inline-block; width:9px; height:9px; border-radius:3px; background:var(--navy); margin-right:6px; vertical-align:0; }
+  .seats { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:16px; padding-top:16px; border-top:1px solid var(--line-soft); }
+  .seat-row { display:flex; gap:6px; }
+  .seat-row i { width:26px; height:30px; border-radius:7px 7px 4px 4px; border:1.5px solid var(--red); background:var(--red-soft); }
+  .seats p { margin:0; font-size:13.5px; color:var(--ink-soft); }
+  .seats p b { color:var(--ink); }
+
+  .spec { list-style:none; margin:24px 0 0; padding:0; display:grid; grid-template-columns:repeat(2,1fr); gap:14px 24px; }
+  @media (max-width:560px){ .spec { grid-template-columns:1fr; } }
+  .spec li { font-size:14.5px; line-height:1.45; }
+  .spec .k { display:block; font-size:11.5px; font-weight:700; letter-spacing:.1em; color:var(--ink-faint); margin-bottom:3px; }
+
+  /* stuck */
+  .stuck { list-style:none; margin:26px 0 0; padding:0; display:grid; gap:12px; }
+  .stuck li { display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; padding:16px 18px; border:1px solid var(--line); border-radius:12px; background:var(--raised); }
+  .stuck .q { font-family:var(--serif); font-weight:700; font-size:16px; line-height:1.5; }
+  .stuck .q small { display:block; font-family:var(--sans); font-weight:400; font-size:13.5px; color:var(--ink-soft); margin-top:4px; }
+  .stuck .ic { font-family:var(--num); font-size:22px; color:var(--red); line-height:1.1; font-weight:700; }
+  .turn { margin-top:28px; padding:20px 22px; border-radius:12px; background:var(--navy-soft); border:1px solid var(--line); }
+  .turn p { margin:0; font-family:var(--serif); font-weight:700; font-size:clamp(17px,2.8vw,20px); line-height:1.55; max-width:none; }
+
+  /* includes */
+  .incl { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:26px; background:var(--navy-line); border:1px solid var(--navy-line); border-radius:14px; overflow:hidden; }
+  @media (max-width:600px){ .incl { grid-template-columns:1fr; } }
+  .inc { background:var(--navy); padding:22px; min-width:0; }
+  .inc .tag { display:inline-block; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--navy); background:var(--red-on-navy); padding:3px 9px; border-radius:20px; }
+  .inc h3 { font-size:17px; font-weight:800; margin:12px 0 0; color:var(--on-navy); }
+  .inc p { font-size:13.5px; margin:8px 0 0; line-height:1.6; }
+  .unlimited { margin-top:22px; text-align:center; font-family:var(--serif); font-weight:900; font-size:clamp(20px,3.6vw,26px); color:var(--on-navy); }
+  .unlimited span { color:var(--red-on-navy); }
+
+  /* flow */
+  .flow { list-style:none; margin:26px 0 0; padding:0; position:relative; display:grid; gap:0; }
+  .flow li { display:grid; grid-template-columns:72px 1fr; gap:18px; padding:18px 0; border-bottom:1px solid var(--line-soft); }
+  .flow li:last-child { border-bottom:none; }
+  .flow .wk { font-family:var(--num); font-weight:700; color:var(--red); font-size:13px; line-height:1.3; }
+  .flow .wk b { display:block; font-size:24px; color:var(--ink); }
+  .flow h3 { font-size:16.5px; font-weight:800; }
+  .flow p { font-size:14px; color:var(--ink-soft); margin:6px 0 0; }
+  @media (max-width:440px){ .flow li { grid-template-columns:56px 1fr; gap:12px; } }
+
+  /* coach */
+  .coach { display:grid; grid-template-columns:150px 1fr; gap:26px; margin-top:26px; align-items:start; }
+  @media (max-width:560px){ .coach { grid-template-columns:1fr; } }
+  .coach img { width:150px; max-width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:12px; display:block; }
+  .coach .name { font-size:22px; font-weight:900; margin:0; }
+  .coach .role { font-size:13.5px; color:var(--red); font-weight:700; margin:3px 0 0; }
+  .coach ul { list-style:none; margin:14px 0 0; padding:0; display:grid; gap:6px; }
+  .coach ul li { font-size:13.5px; color:var(--ink-soft); padding-left:15px; position:relative; line-height:1.5; }
+  .coach ul li::before { content:"—"; position:absolute; left:0; color:var(--ink-faint); }
+  .quote { margin-top:26px; font-family:var(--serif); font-weight:700; font-size:clamp(17px,2.8vw,20px); line-height:1.6; padding-left:18px; border-left:3px solid var(--red); max-width:none; }
+  .chips { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:24px; }
+  @media (max-width:460px){ .chips { grid-template-columns:1fr; } }
+  .chip { border:1px solid var(--line); border-radius:11px; padding:14px 15px; background:var(--raised); }
+  .chip b { display:block; font-family:var(--num); font-size:22px; font-weight:700; margin-bottom:3px; }
+  .chip b small { font-family:var(--sans); font-size:.55em; }
+  .chip span { font-size:12.5px; color:var(--ink-soft); line-height:1.45; display:block; }
+
+  /* press */
+  .press { margin-top:30px; }
+  .press-label { margin:0 0 12px; font-size:12px; font-weight:800; letter-spacing:.08em; color:var(--red); }
+  .press-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:560px){ .press-grid { grid-template-columns:1fr; } }
+  .press-card { display:block; text-decoration:none; min-width:0; }
+  .press-card img { display:block; width:100%; border-radius:10px; border:1px solid var(--line); background:#fff; }
+  .press-card span { display:block; margin-top:8px; font-size:13px; font-weight:700; color:var(--ink); line-height:1.45; }
+  .press-card small { display:block; font-size:12px; font-weight:500; color:var(--ink-faint); }
+  .press-card:hover img { border-color:var(--red); }
+  .press-card:hover span { color:var(--red); }
+  .press-card:focus-visible { outline:2px solid var(--red); outline-offset:3px; border-radius:10px; }
+
+  /* reviews */
+  .reviews { display:grid; gap:18px; margin-top:26px; }
+  .review { border-left:2px solid var(--navy); padding:2px 0 2px 18px; }
+  .review p { margin:0; font-size:14.5px; line-height:1.75; }
+  .review .by { display:block; margin-top:9px; font-size:12.5px; color:var(--ink-faint); font-weight:600; }
+
+  /* price */
+  .price { margin-top:26px; border:1px solid var(--navy-line); border-radius:16px; padding:clamp(22px,4vw,30px); text-align:center; background:rgba(255,255,255,.04); }
+  .price .pl { font-size:12px; font-weight:700; letter-spacing:.1em; color:var(--red-on-navy); }
+  .price .pv { font-family:var(--num); font-size:clamp(40px,9vw,60px); font-weight:700; color:#fff; line-height:1.1; margin:10px 0 4px; }
+  .price .pv small { font-family:var(--sans); font-size:.4em; font-weight:700; }
+  .price .pd { font-size:14px; color:var(--on-navy-soft); margin:0 auto; }
+  .daily { display:inline-flex; align-items:baseline; gap:6px; margin-top:16px; padding:8px 16px; border-radius:30px; background:var(--red-on-navy); color:#15264c; font-weight:800; font-size:15px; }
+  .daily .fig { font-size:19px; }
+  .compare { list-style:none; margin:20px 0 0; padding:0; border:1px solid var(--navy-line); border-radius:12px; overflow:hidden; }
+  .compare li { display:flex; justify-content:space-between; gap:16px; padding:13px 18px; font-size:14px; border-bottom:1px solid var(--navy-line); }
+  .compare li:last-child { border-bottom:none; background:rgba(255,255,255,.05); font-weight:700; }
+  .compare li span:last-child { flex:0 0 auto; color:var(--on-navy-soft); }
+  .compare li:last-child span:last-child { color:var(--red-on-navy); }
+
+  /* fit */
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:24px; }
+  @media (max-width:640px){ .two { grid-template-columns:1fr; gap:24px; } }
+  .col-label { font-size:12px; font-weight:800; letter-spacing:.08em; margin:0 0 12px; }
+  .col-label.good { color:var(--navy); }
+  .col-label.bad { color:var(--red); }
+  .marks { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  .marks li { padding-left:28px; position:relative; font-size:15px; line-height:1.5; }
+  .marks li::before { position:absolute; left:0; top:2px; width:18px; height:18px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; }
+  .marks.yes li::before { content:"✓"; background:var(--navy); color:#fff; }
+  .marks.no li { color:var(--ink-soft); }
+  .marks.no li::before { content:"✕"; background:var(--red-soft); color:var(--red); border:1px solid var(--red-line); font-size:10px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .col-label.good { color:#bcd0ff; } :root:not([data-theme="light"]) .marks.yes li::before { background:#2c3d68; } }
+  :root[data-theme="dark"] .col-label.good { color:#bcd0ff; }
+  :root[data-theme="dark"] .marks.yes li::before { background:#2c3d68; }
+
+  /* apply */
+  .steps { list-style:none; margin:24px 0 0; padding:0; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; counter-reset:s; }
+  @media (max-width:600px){ .steps { grid-template-columns:1fr 1fr; } }
+  .steps li { counter-increment:s; border:1px solid var(--line); border-radius:12px; padding:14px; background:var(--raised); font-size:13.5px; line-height:1.5; min-width:0; }
+  .steps li::before { content:counter(s); display:block; font-family:var(--num); font-weight:700; font-size:20px; color:var(--red); margin-bottom:4px; }
+  .steps li b { display:block; font-size:14.5px; }
+  .info { border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:22px; background:var(--raised); }
+  .info dl { margin:0; display:grid; grid-template-columns:110px 1fr; }
+  .info dt, .info dd { margin:0; padding:13px 18px; border-bottom:1px solid var(--line-soft); font-size:14px; min-width:0; }
+  .info dt { color:var(--ink-faint); font-weight:700; font-size:12.5px; }
+  .info dl > *:nth-last-child(-n+2) { border-bottom:none; }
+  .copy { margin-left:8px; font:inherit; font-size:12px; font-weight:700; color:var(--ink-soft); background:var(--line-soft); border:1px solid var(--line); border-radius:6px; padding:2px 8px; cursor:pointer; }
+  .copy:hover { color:var(--ink); }
+  .copy:focus-visible { outline:2px solid var(--red); outline-offset:2px; }
+
+  /* faq */
+  .faq { margin-top:22px; border-top:1px solid var(--line); }
+  .faq details { border-bottom:1px solid var(--line); }
+  .faq summary { cursor:pointer; list-style:none; padding:16px 34px 16px 0; position:relative; font-size:15px; font-weight:700; }
+  .faq summary::-webkit-details-marker { display:none; }
+  .faq summary::after { content:"+"; position:absolute; right:4px; top:13px; font-size:20px; font-weight:400; color:var(--red); font-family:var(--num); }
+  .faq details[open] summary::after { content:"–"; }
+  .faq summary:focus-visible { outline:2px solid var(--red); outline-offset:2px; border-radius:4px; }
+  .faq .a { padding:0 0 18px; font-size:14px; color:var(--ink-soft); line-height:1.75; }
+  .faq .a p { margin:0; }
+
+  /* closing */
+  .closing { text-align:center; }
+  .closing .pull { font-family:var(--serif); font-weight:700; font-size:clamp(21px,3.8vw,29px); line-height:1.55; color:var(--on-navy); max-width:22ch; margin:0 auto; text-wrap:balance; }
+  .closing .sub { margin:18px auto 0; max-width:40ch; font-size:14.5px; }
+  .closing .cta-row { justify-content:center; }
+
+  footer { padding-block:36px 96px; border-top:1px solid var(--line); }
+  footer .wrap { font-size:12.5px; color:var(--ink-faint); line-height:1.75; }
+  footer b { color:var(--ink-soft); }
+
+  /* sticky bar */
+  .stickybar {
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding-top:11px; padding-bottom:calc(11px + env(safe-area-inset-bottom,0px));
+    padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px));
+    background:color-mix(in srgb, var(--raised) 94%, transparent); backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);
+    transform:translateY(110%); transition:transform .28s ease;
+  }
+  .stickybar.show { transform:translateY(0); }
+  .stickybar .t { font-size:13.5px; font-weight:800; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .stickybar .t span { display:block; font-size:12px; font-weight:500; color:var(--ink-faint); }
+  .stickybar .btn { padding:10px 18px; font-size:14px; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<header class="topbar" id="top">
+  <a class="brand" href="#top">스레드 30일 밀착 코칭</a>
+  <nav>
+    <a href="#includes">코칭 내용</a>
+    <a href="#flow">30일 흐름</a>
+    <a href="#coach">코치</a>
+    <a href="#reviews">후기</a>
+    <a href="#price">가격</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <a class="mini-cta" href="#apply">신청하기</a>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker"><span class="dot" aria-hidden="true"></span>1기 모집 · 딱 5명만</p>
+      <h1>첫 한 달은<br>저를 <em>마음껏 괴롭히세요</em></h1>
+      <p class="promise">강의 몇 번 듣고 혼자 해보라고 하면, 막상 무슨 글을 써야 할지 막막합니다. 30일 동안 계정 분석부터 글 첨삭까지 옆에 붙어서 함께 키웁니다.</p>
+
+      <div class="board" aria-label="30일 코칭 기간과 모집 인원">
+        <div class="board-head"><b>30일, 매일 물어보셔도 됩니다</b><span>질문 · 첨삭 · 피드백 횟수 제한 없음</span></div>
+        <div class="cal" id="cal" aria-hidden="true"></div>
+        <div class="legend"><span>코칭 진행일 30일 전부</span></div>
+        <div class="seats">
+          <div class="seat-row" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+          <p><b>모집 인원 5명</b> · 한 명 한 명 밀착하려고 더 받지 않습니다</p>
+        </div>
+      </div>
+
+      <ul class="spec">
+        <li><span class="k">기간</span><b>30일</b> · <b>11월 1일(일)</b> 시작</li>
+        <li><span class="k">방식</span><b>1:1 밀착 코칭</b> · 온라인</li>
+        <li><span class="k">인원</span><b>1기 5명</b> · 선착순</li>
+        <li><span class="k">가격</span><b class="fig">300,000원</b> · 하루 1만 원</li>
+      </ul>
+
+      <div class="cta-row">
+        <a class="btn" href="#apply">1기 신청하기</a>
+        <a class="btn btn--ghost" href="#includes">무엇을 도와주나요</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STUCK -->
+  <section id="stuck">
+    <div class="wrap">
+      <p class="eyebrow">혼자 하면 막히는 곳</p>
+      <h2>스레드, 처음엔<br>생각보다 쉽지 않습니다</h2>
+      <p class="lede">"스레드 코칭 같은 건 안 하세요?" 요즘 이런 문의를 자주 받습니다. 들어보면 막히는 지점이 거의 같습니다.</p>
+      <ul class="stuck">
+        <li><span class="ic">?</span><div class="q">무슨 글을 써야 할지 모르겠어요<small>강의는 들었는데 막상 빈 화면 앞에 서면 첫 줄이 안 나옵니다.</small></div></li>
+        <li><span class="ic">?</span><div class="q">올렸는데 반응이 없어요<small>조회수도 댓글도 그대로인데, 무엇이 문제인지 알 수가 없습니다.</small></div></li>
+        <li><span class="ic">?</span><div class="q">내 계정이 어떤 방향인지 모르겠어요<small>이것저것 올리다 보니 계정에 색깔이 없습니다.</small></div></li>
+        <li><span class="ic">?</span><div class="q">물어볼 사람이 없어요<small>혼자 고민하다 며칠 쉬고, 그러다 계정을 놓게 됩니다.</small></div></li>
+      </ul>
+      <div class="turn"><p>저도 팔로워 1만 명을 만들면서 이 시행착오를 전부 겪었습니다. 그래서 첫 달만큼은 혼자 두지 않기로 했습니다.</p></div>
+    </div>
+  </section>
+
+  <!-- INCLUDES -->
+  <section id="includes" class="band">
+    <div class="wrap">
+      <p class="eyebrow">코칭 내용</p>
+      <h2>30일 동안<br>이 네 가지를 전부 함께합니다</h2>
+      <p class="lede">글을 쓰다 막히면 물어보고, 반응이 안 나오면 같이 고민하고, 스레드에 맞게 첨삭까지 해드립니다.</p>
+      <div class="incl">
+        <div class="inc"><span class="tag">1:1 컨설팅</span><h3>계정 분석 및 성장 전략</h3><p>지금 계정의 강점과 빈 곳을 짚고, 내 상황에 맞는 성장 방향을 1:1로 잡습니다.</p></div>
+        <div class="inc"><span class="tag">기획</span><h3>콘텐츠 기획 및 브랜딩 방향</h3><p>무엇을 쓰는 사람으로 기억될지 정하고, 내 경험에서 꺼낼 글감을 함께 찾습니다.</p></div>
+        <div class="inc"><span class="tag">첨삭</span><h3>글쓰기 첨삭 및 피드백</h3><p>쓰신 글을 스레드 문법에 맞게 고칩니다. 첫 줄, 길이, 말투, 마무리까지 봅니다.</p></div>
+        <div class="inc"><span class="tag">분석</span><h3>조회수 · 댓글 분석 및 개선</h3><p>어떤 글이 왜 터지고 왜 묻혔는지 숫자로 보고, 다음 글에 바로 반영합니다.</p></div>
+      </div>
+      <p class="unlimited">이 모든 걸 30일 동안 <span>무제한으로</span></p>
+    </div>
+  </section>
+
+  <!-- FLOW -->
+  <section id="flow">
+    <div class="wrap">
+      <p class="eyebrow">30일 흐름</p>
+      <h2>한 달은 이렇게 흘러갑니다</h2>
+      <p class="lede">주차별 중심은 있지만, 질문과 첨삭은 첫날부터 마지막 날까지 언제든 열려 있습니다.</p>
+      <ol class="flow">
+        <li><div class="wk">WEEK<b>1</b></div><div><h3>계정 진단과 방향 잡기</h3><p>1:1 컨설팅으로 현재 계정을 분석하고, 브랜딩 방향과 한 달 목표를 정합니다.</p></div></li>
+        <li><div class="wk">WEEK<b>2</b></div><div><h3>글감 찾기와 매일 쓰기</h3><p>내 경험에서 글감을 뽑아 콘텐츠 계획을 세우고, 쓰는 글마다 첨삭을 받습니다.</p></div></li>
+        <li><div class="wk">WEEK<b>3</b></div><div><h3>반응 분석과 고치기</h3><p>조회수와 댓글을 보며 잘 된 글과 안 된 글의 차이를 찾고, 다음 글에 반영합니다.</p></div></li>
+        <li><div class="wk">WEEK<b>4</b></div><div><h3>혼자서도 굴러가게</h3><p>나에게 맞는 글쓰기 루틴을 정리하고, 코칭이 끝난 뒤의 운영 계획까지 세웁니다.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- COACH -->
+  <section id="coach">
+    <div class="wrap">
+      <p class="eyebrow">코치</p>
+      <h2>광고비 없이 스레드로<br>사람을 모아본 사람이 봐드립니다</h2>
+      <div class="coach">
+        <img src="leader.jpg" alt="서진욱 코치 프로필 사진" width="150" height="188">
+        <div>
+          <p class="name">서진욱</p>
+          <p class="role">스레드 팔로워 1만 · @ceo_jinuk</p>
+          <ul>
+            <li>인터넷 언론사 &lt;대한청년일보&gt; 대표</li>
+            <li>광고대행사 &lt;스텝업컴퍼니&gt; 대표</li>
+            <li>스레드 마케팅 실전 강의 진행 (강사온스쿨 1 · 2기 외)</li>
+            <li>교보문고 베스트셀러 &lt;이번 생은 망했다 다음 생에나 책 읽자&gt; 공저</li>
+            <li>메가존 서비스 기획자 (아시아나항공 · GS글로벌)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="chips">
+        <div class="chip"><b class="fig">25<small> 명</small></b><span>대한청년일보 기자단<br>스레드에서 시작된 조직 확장</span></div>
+        <div class="chip"><b class="fig">22<small> 명</small></b><span>성장하는 남녀들의 모임<br>스레드로 모은 오프라인 커뮤니티</span></div>
+        <div class="chip"><b class="fig">15<small> 명</small></b><span>크리스마스이브 번개 파티<br>모집 이틀 만에</span></div>
+        <div class="chip"><b>채용 연결</b><span>유튜브 채널의 채용을<br>스레드에서 인재 매칭</span></div>
+      </div>
+      <div class="press">
+        <p class="press-label">스레드 강의 언론 보도</p>
+        <div class="press-grid">
+          <a class="press-card" href="https://www.koreayouthdaily.com/news/525850" target="_blank" rel="noopener">
+            <img src="press-1.jpg" alt="대한청년일보 기사: 강의만 잘해선 부족하다, 스레드로 모객하는 강사의 비밀 공개" loading="lazy">
+            <span>스레드 마케팅 실전 특강 1기 →<small>대한청년일보 · 2026.07</small></span>
+          </a>
+          <a class="press-card" href="https://www.koreayouthdaily.com/news/533126" target="_blank" rel="noopener">
+            <img src="press-2.jpg" alt="대한청년일보 스레드 마케팅 특강 2기 기사" loading="lazy">
+            <span>스레드 마케팅 실전 특강 2기 →<small>대한청년일보 · 2026.08</small></span>
+          </a>
+        </div>
+      </div>
+      <p class="quote">솔직히 이렇게까지 밀착해서 도와주는 프로그램은 흔치 않을 겁니다. 한 달 동안 함께 성장해 봅시다.</p>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews">
+    <div class="wrap">
+      <p class="eyebrow">먼저 받아본 분들</p>
+      <h2>1:1로 봐드렸더니<br>방향이 선명해졌습니다</h2>
+      <p class="lede">이전 1:1 코칭과 스레드 강의를 들은 분들이 직접 남긴 후기에서 옮겼습니다.</p>
+      <div class="reviews">
+        <div class="review">
+          <p>1시간이 어떻게 지나가는지 모르게 코칭해주셨어요. 그냥 '이렇게 쓰세요'가 아니라 꼼꼼하고 상세하게 개인의 성향까지 고려해서 코칭해주세요. 액션은 제가 해야 하는 것이므로 매일 3개씩 올리려 노력하고, 알려주신 방향성대로 작성하고 있습니다.</p>
+          <span class="by">장O인 · 1:1 코칭</span>
+        </div>
+        <div class="review">
+          <p>스레드를 하면서도 뭘 올려야 할지, 내 경험을 어디까지 풀어야 할지 막연했는데, 이야기를 나누다 보니 제가 이미 가진 경험과 강점도 충분히 콘텐츠가 될 수 있다는 걸 알게 됐어요. 앞으로 어떤 방향으로 운영할지가 훨씬 선명해졌습니다.</p>
+          <span class="by">권O서 · 1:1 피드백</span>
+        </div>
+        <div class="review">
+          <p>글솜씨도 별로이고 장문의 글쓰기가 부담스러워 고민만 하고 있었습니다. 안 되는 부분을 계속 여쭤봐도 찬찬히 알려주셔서, 오늘 아침 일찍 글을 올렸습니다.</p>
+          <span class="by">손O희 · 스레드 강의 수강</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICE -->
+  <section id="price" class="band">
+    <div class="wrap">
+      <p class="eyebrow">가격</p>
+      <h2>첫 기수라<br>파격적으로 열었습니다</h2>
+      <div class="price">
+        <div class="pl">1기 · 30일 밀착 코칭</div>
+        <div class="pv fig">300,000<small>원</small></div>
+        <p class="pd">계정 분석 · 기획 · 첨삭 · 분석 30일 무제한</p>
+        <div class="daily">하루 <span class="fig">10,000</span>원</div>
+      </div>
+      <ul class="compare">
+        <li><span>1:1 계정 진단 1회</span><span class="fig">150,000원</span></li>
+        <li><span>30일 밀착 코칭 (진단 포함, 무제한)</span><span class="fig">300,000원</span></li>
+      </ul>
+      <p class="footnote">한 번 진단받고 끝나는 게 아니라, 한 달 내내 쓰는 글마다 함께 봅니다. 1기 가격은 다음 기수부터 달라질 수 있습니다.</p>
+    </div>
+  </section>
+
+  <!-- FIT -->
+  <section id="fit">
+    <div class="wrap">
+      <p class="eyebrow">신청 전에</p>
+      <h2>진짜 열심히 할 분만<br>신청해 주세요</h2>
+      <p class="lede">다섯 자리뿐이라 끝까지 함께 쓸 분께 드리고 싶습니다.</p>
+      <div class="two">
+        <div>
+          <p class="col-label good">이런 분께 맞습니다</p>
+          <ul class="marks yes">
+            <li>스레드를 시작했지만 무엇을 써야 할지 막막한 분</li>
+            <li>강의는 들었는데 혼자 실행하다 멈춘 분</li>
+            <li>스레드로 나와 내 일을 알리고 싶은 사업가 · 프리랜서 · 강사</li>
+            <li>한 달 동안 꾸준히 글을 올릴 의지가 있는 분</li>
+          </ul>
+        </div>
+        <div>
+          <p class="col-label bad">이런 분께는 맞지 않습니다</p>
+          <ul class="marks no">
+            <li>글은 쓰지 않고 방법만 듣고 싶은 분</li>
+            <li>계정 운영을 통째로 맡기고 싶은 분</li>
+            <li>한 달 안에 팔로워 숫자만 빠르게 늘리고 싶은 분</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLY -->
+  <section id="apply">
+    <div class="wrap">
+      <p class="eyebrow">신청 방법</p>
+      <h2>선착순 5명,<br>이렇게 신청합니다</h2>
+      <ol class="steps">
+        <li><b>신청</b>스레드 DM 또는 문자로 "코칭 신청"</li>
+        <li><b>짧은 상담</b>계정과 목표를 간단히 확인</li>
+        <li><b>입금</b>계좌이체 후 자리 확정</li>
+        <li><b>30일 시작</b>1:1 계정 진단부터</li>
+      </ol>
+      <div class="info">
+        <dl>
+          <dt>스레드 DM</dt><dd><a href="https://www.threads.net/@ceo_jinuk" target="_blank" rel="noopener">@ceo_jinuk</a></dd>
+          <dt>문의</dt><dd><span id="phone">010-9123-2789</span> (서진욱)<button class="copy" type="button" data-copy="phone">복사</button></dd>
+          <dt>시작일</dt><dd>11월 1일(일) · 30일 진행</dd>
+          <dt>계좌이체</dt><dd><span id="account">우리은행 1002-261-613-034</span> (예금주 서진욱)<button class="copy" type="button" data-copy="account">복사</button></dd>
+          <dt>카드결제</dt><dd>희망하시면 개별 문의해 주세요</dd>
+        </dl>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="https://www.threads.net/@ceo_jinuk" target="_blank" rel="noopener">스레드 DM으로 신청하기</a>
+      </div>
+      <p class="footnote">5명이 차면 1기 모집은 마감됩니다. 환불은 10월 29일까지 전액, 10월 30~31일 50%, 시작 후에는 불가합니다.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <p class="eyebrow">FAQ</p>
+      <h2>자주 묻는 질문</h2>
+      <div class="faq">
+        <details><summary>무제한이면 정말 몇 번이든 물어봐도 되나요?</summary><div class="a"><p>네. 30일 동안 질문, 글 첨삭, 반응 분석 요청에 횟수 제한이 없습니다. 글을 쓰다 막히는 순간 바로 보내주시면 됩니다.</p></div></details>
+        <details><summary>스레드를 아직 시작도 안 했는데 괜찮을까요?</summary><div class="a"><p>괜찮습니다. 첫 주 1:1 컨설팅에서 계정 방향부터 같이 정하고, 첫 글을 쓰는 것부터 함께합니다.</p></div></details>
+        <details><summary>스레드 강의와 무엇이 다른가요?</summary><div class="a"><p>강의는 방법을 한 번에 배우는 자리이고, 코칭은 그 방법을 내 계정에 한 달 동안 직접 적용하는 과정입니다. 내가 쓴 글을 기준으로 피드백을 받습니다.</p></div></details>
+        <details><summary>왜 5명만 받나요?</summary><div class="a"><p>무제한으로 첨삭하고 답하려면 한 사람에게 쓸 시간이 충분해야 합니다. 밀착 코칭의 질을 지키려고 인원을 5명으로 정했습니다.</p></div></details>
+        <details><summary>계정 운영을 대신 해주시나요?</summary><div class="a"><p>이 프로그램은 직접 쓰는 힘을 기르는 코칭입니다. 운영 대행이 필요하시면 별도로 문의해 주세요.</p></div></details>
+        <details><summary>환불 규정은 어떻게 되나요?</summary><div class="a"><p>시작 3일 전(10월 29일)까지는 전액 환불, 시작 2일 전부터 전날(10월 30~31일)까지는 50% 환불됩니다. 코칭이 시작된 11월 1일부터는 환불되지 않습니다. 5자리 한정이라 한 자리가 비면 다른 분이 기회를 잃기 때문입니다.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="band closing">
+    <div class="wrap">
+      <p class="pull">글을 쓰다 막히면 물어보고, 반응이 안 나오면 함께 고민합니다</p>
+      <p class="sub">한 달 동안 같이 성장할 다섯 분을 기다립니다.</p>
+      <div class="cta-row">
+        <a class="btn btn--light" href="#apply">1기 신청하기</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>스레드 30일 밀착 코칭</b> · 코치 서진욱 (@ceo_jinuk)<br>
+    스텝업컴퍼니 · 문의 010-9123-2789<br>
+    후기는 수강생이 직접 작성한 글에서 발췌했으며, 이름 일부를 가렸습니다.
+  </div>
+</footer>
+
+<div class="stickybar" id="stickybar">
+  <div class="t">스레드 30일 밀착 코칭 · 1기 5명<span>11월 1일 시작 · 300,000원 · 하루 1만 원</span></div>
+  <a class="btn" href="#apply">신청하기</a>
+</div>
+
+<script>
+  (function () {
+    var cal = document.getElementById('cal');
+    for (var d = 1; d <= 30; d++) {
+      var i = document.createElement('i');
+      i.className = 'on';
+      i.textContent = d;
+      cal.appendChild(i);
+    }
+
+    var bar = document.getElementById('stickybar');
+    var hero = document.querySelector('.hero');
+    var apply = document.getElementById('apply');
+    function onScroll() {
+      var pastHero = hero.getBoundingClientRect().bottom < 0;
+      var r = apply.getBoundingClientRect();
+      var atApply = r.top < window.innerHeight && r.bottom > 0;
+      bar.classList.toggle('show', pastHero && !atApply);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    document.querySelectorAll('.copy').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var el = document.getElementById(b.dataset.copy);
+        var text = el.textContent.trim();
+        function selectIt() {
+          var r = document.createRange(); r.selectNodeContents(el);
+          var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        }
+        try {
+          navigator.clipboard.writeText(text).then(function () {
+            b.textContent = '복사됨';
+            setTimeout(function () { b.textContent = '복사'; }, 1500);
+          }, selectIt);
+        } catch (e) { selectIt(); }
+      });
+    });
+  })();
+</script>
+</body>
+</html>
