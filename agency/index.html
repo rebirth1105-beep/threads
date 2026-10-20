@@ -582,6 +582,8 @@
       if (!document.getElementById('f-agree').checked) { msg.textContent = '개인정보 수집 · 이용에 동의해 주세요.'; return; }
       if (document.getElementById('f-website').value) return;
       if (!ENDPOINT) { msg.textContent = '지금은 신청서를 받을 수 없습니다. 010-9123-2789로 연락 주세요.'; return; }
+      // Claude 미리보기는 외부 전송이 막혀 있어 공개 페이지로 안내
+      if (!/github\.io$/.test(location.hostname)) { msg.innerHTML = '미리보기 화면에서는 신청이 전송되지 않습니다. <a href="https://rebirth1105-beep.github.io/threads/agency/#contact" target="_blank" rel="noopener">공개 페이지</a>에서 신청해 주세요.'; return; }
 
       var data = new URLSearchParams(new FormData(form));
       data.delete('website');
